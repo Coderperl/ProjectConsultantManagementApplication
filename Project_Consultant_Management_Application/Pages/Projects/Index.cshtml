@@ -1,0 +1,60 @@
+﻿@page
+@model Project_Consultant_Management_Application.Pages.Projects.IndexModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-page="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Project[0].ProjectName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Project[0].ProjectDescription)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Project[0].Company)
+            </th>
+            <th>
+                Consultants 
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var project in Model.Project) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => project.ProjectName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => project.ProjectDescription)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => project.Company.CompanyName)
+            </td>
+             <td>
+                    @foreach(var consult in project.Consultants)
+                    {
+                        @Html.DisplayFor(modelItem => consult.Fullname)
+                        <P></P>
+                        
+                    }
+                    
+            </td>
+            <td>
+                <a asp-page="./Edit" asp-route-id="@project.Id">Edit</a> |
+                <a asp-page="./Details" asp-route-id="@project.Id">Details</a> |
+                <a asp-page="./Delete" asp-route-id="@project.Id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
