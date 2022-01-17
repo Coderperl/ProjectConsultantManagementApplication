@@ -27,8 +27,25 @@
             @Html.DisplayNameFor(model => model.Project.Company)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Project.Company.Id)
+            @Html.DisplayFor(model => model.Project.Company.CompanyName)
         </dd>
+        <H6>
+            @Html.DisplayNameFor(model => model.Project.Consultants)
+        </H6>
+        <ul style="list-style-type:none">
+            @foreach (var c in @Model.Project.Consultants)
+        {
+            <li >
+                @c.FullName
+            </li>
+        }
+        </ul>
+        
+
+
+        
+       
+        
     </dl>
 </div>
 <div>

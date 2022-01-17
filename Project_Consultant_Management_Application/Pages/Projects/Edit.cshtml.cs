@@ -1,8 +1,4 @@
 ﻿#nullable disable
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -22,6 +18,9 @@ namespace Project_Consultant_Management_Application.Pages.Projects
 
         [BindProperty]
         public Project Project { get; set; }
+        public SelectList ConsultantList { get; set; }
+        [BindProperty]
+        public int[] Consultants { get; set; }
 
         public async Task<IActionResult> OnGetAsync(long? id)
         {
@@ -37,24 +36,33 @@ namespace Project_Consultant_Management_Application.Pages.Projects
             {
                 return NotFound();
             }
-           ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Id");
+            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "CompanyName");
+            ConsultantList = new SelectList(_context.Consultants, "Id", "FullName");
             return Page();
         }
 
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see https://aka.ms/RazorPagesCRUD.
-        public async Task<IActionResult> OnPostAsync()
+        public IActionResult OnPost()
         {
+            _context.Attach(Project).State = EntityState.Added;
             if (!ModelState.IsValid)
             {
                 return Page();
             }
-
-            _context.Attach(Project).State = EntityState.Modified;
-
+            _context.Entry(Project).Collection(p => p.Consultants).Load();
+            List<Consultant> ConsultantToAdd = new();
+            foreach (int id in Consultants)
+            {
+                Consultant c = _context.Consultants.Single(c => c.Id == id);
+                ConsultantToAdd.Add(c);
+            }
+            Project.Consultants = ConsultantToAdd;
+            _context.Update(Project);
+            
             try
             {
-                await _context.SaveChangesAsync();
+                _context.SaveChanges();
             }
             catch (DbUpdateConcurrencyException)
             {

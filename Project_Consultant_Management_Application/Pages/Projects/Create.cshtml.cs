@@ -16,36 +16,36 @@ namespace Project_Consultant_Management_Application.Pages.Projects
             _context = context;
         }
 
+        public SelectList CompanyList { get; set; }
+        public SelectList ConsultantList { get; set; }
+
+
         [BindProperty]
         public Project Project { get; set; }
         [BindProperty]
-        public List<Project> Projects { get; set; }
+        public int[] Consultants { get; set; }
 
         public IActionResult OnGet()
         {
-            Projects = _context.Projects
-                .Include(p => p.Company).
-                Include(c => c.Consultants).
-                ToList();
-
-            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "CompanyName");
+            CompanyList = new SelectList(_context.Companies, "Id", "CompanyName");
+            ConsultantList = new SelectList(_context.Consultants, "Id", "FullName");
             return Page();
-            ViewData["Consultant"] = new SelectList(_context.Consultants, "Id", "Consultant");
-            return Page();
-
-
         }
         // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
-        public async Task<IActionResult> OnPostAsync()
+        public IActionResult OnPost()
         {
             if (!ModelState.IsValid)
             {
                 return Page();
             }
-
+            
+            foreach (int id in Consultants)
+            {
+                Consultant c = _context.Consultants.Single(c => c.Id == id);
+                Project.Consultants.Add(c);
+            }
             _context.Projects.Add(Project);
-            await _context.SaveChangesAsync();
-
+             _context.SaveChanges();
             return RedirectToPage("./Index");
         }
     }

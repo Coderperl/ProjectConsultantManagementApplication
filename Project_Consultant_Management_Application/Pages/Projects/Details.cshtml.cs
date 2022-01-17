@@ -20,16 +20,28 @@ namespace Project_Consultant_Management_Application.Pages.Projects
         }
 
         public Project Project { get; set; }
+        [BindProperty]
+        public List<Project> Projects { get; set; }
+        [BindProperty]
+        public Consultant Consultant { get; set; }
+        [BindProperty]
+        public long[] Consultants { get; set; }
 
-        public async Task<IActionResult> OnGetAsync(long? id)
+        public IActionResult OnGet(long? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            Project = await _context.Projects
-                .Include(p => p.Company).FirstOrDefaultAsync(m => m.Id == id);
+            Project =  _context.Projects
+                .Include(p => p.Company)
+                .Include(p => p.Consultants).
+
+                FirstOrDefault(m => m.Id == id);
+            //Consultant = _context.Consultants.Where(c => Consultants.).ToList();
+
+           
 
             if (Project == null)
             {

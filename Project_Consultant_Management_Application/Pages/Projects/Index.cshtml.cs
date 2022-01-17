@@ -21,7 +21,6 @@ namespace Project_Consultant_Management_Application.Pages.Projects
 
         public IList<Project> Project { get;set; }
         
-
         public async Task OnGetAsync()
         {
             Project = await _context.Projects
